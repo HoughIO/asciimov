@@ -1,4 +1,4 @@
-FROM alpine:3.4 AS builder
+FROM docker.pkg.github.com/houghio/nms/nms:original AS builder
 
 FROM node:alpine
 COPY --from=builder /usr/local/bin /usr/local/bin/
