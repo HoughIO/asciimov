@@ -2,6 +2,15 @@
 
 This project uses an Alpine Linux Container to create asciinemas, gifs, and videos of text being ran through NMS decoder.
 
+##Script (easiest)
+Requires docker.
+
+```bash
+$ asciimov install
+```
+
+Add to your path for convenience.
+
 ## Docker
 Head on over to the [Packages section of this repo](https://github.com/HoughIO/nms/packages) and pull the latest image.
 ```bash

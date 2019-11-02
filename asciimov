@@ -1,0 +1,121 @@
+#!/bin/bash
+ASCIIMOV_VERSION=1.0.1
+
+ASCIIMOV_ARG1=$1
+ASCIIMOV_ARG2=$2
+
+IMAGE_NAME="docker.pkg.github.com/houghio/nms/nms"
+IMAGE_TAG=$ASCIIMOV_VERSION
+
+if [ $# -eq 0 ]; then
+  NO_ARGS=True
+fi
+
+#OPTIONS FOR asciinema:
+#asciinema rec $ASCIINEMA_NAME
+ASCIINEMA_NAME=""
+#asciinema --idle-time-limit=<sec>
+ASCIINEMA_IDLE_TIME="2.5"
+
+#OPTIONS FOR FIGLET:
+#figlet -f fontfile
+FIGLET_FONT=""
+#figlist: Lists all fonts and control files in figlet's default font directory. Replaces "figlet -F", which was removed from figlet version 2.1.
+
+print_help () {
+  echo """
+  useage: [flags] [--version] {uninstall, install, exec, help, version, versions}
+
+  Create gifs, mp4s, videos, decyptors, and dank memes.
+
+  positional arguments:
+    {uninstall, install, exec, help, version, versions}
+      install                            Installs asciimov image(s)
+                                           ( can specity version)
+      uninstall                          Uninstalls asciimov image(s)
+                                           ( can specity version)
+      exec                               Starts a bash session inside an asciimov container
+                                           ( can specity version)
+      version                            Lists the current version
+      versions                           Prints all installed versions
+      help                               Prints this help text
+
+  optional arguments:
+    -h --help                            Prints this help menu
+    -v --version                         Prints the current version
+
+  """
+}
+
+run_interactive () {
+  if [[ $ASCIIMOV_ARG1 ]]; then
+    docker run -it $IMAGE_NAME:$ASCIIMOV_VERSION /bin/bash
+  else
+    docker run -it $IMAGE_NAME:$ASCIIMOV_ARG2 /bin/bash
+  fi
+}
+
+version () {
+  echo "Image Name: $IMAGE_NAME"
+  echo "Image Tag: $IMAGE_TAG"
+  echo "Version: $ASCIIMOV_VERSION"
+}
+
+
+install () {
+  #If no arguments for version number, then download this current version
+  if [ -z $ASCIIMOV_ARG2 ]; then
+    docker pull $IMAGE_NAME:$ASCIIMOV_VERSION
+  else
+    docker pull $IMAGE_NAME:$ASCIIMOV_ARG2
+  fi
+}
+
+version() {
+  echo $ASCIIMOV_VERSION
+}
+
+versions() {
+  docker image ls --filter=reference=$IMAGE_NAME
+}
+
+uninstall () {
+  if [[ $ASCIIMOV_ARG2 = "list" ]]; then
+    docker image ls --filter=reference=$IMAGE_NAME
+  fi
+
+  #If no arguments for version number, then remove all nms images
+  if [[ -z $ASCIIMOV_ARG2 ]]; then
+    docker images | grep ${IMAGE_NAME} | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi -f ${IMAGE_NAME}:{}
+  else
+    docker rmi -f $IMAGE_NAME:$ASCIIMOV_ARG2
+  fi
+}
+
+main () {
+  if [[ $NO_ARGS = True ]]; then
+    print_help
+  fi
+
+  if [[ $ASCIIMOV_ARG1 = "install" ]]; then
+    install
+  fi
+
+  if [[ $ASCIIMOV_ARG1 = "uninstall" ]]; then
+    uninstall
+  fi
+
+  if [[ $ASCIIMOV_ARG1 = "exec" ]]; then
+    run_interactive
+  fi
+
+  if [[ $ASCIIMOV_ARG1 = "versions" ]]; then
+    versions
+  fi
+
+  if [[ $ASCIIMOV_ARG1 = "version" ]]; then
+    version
+  fi
+}
+
+main
