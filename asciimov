@@ -4,7 +4,7 @@ ASCIIMOV_VERSION=1.0.1
 ASCIIMOV_ARG1=$1
 ASCIIMOV_ARG2=$2
 
-IMAGE_NAME="docker.pkg.github.com/houghio/nms/nms"
+IMAGE_NAME="docker.pkg.github.com/houghio/asciimov/asciimov"
 IMAGE_TAG=$ASCIIMOV_VERSION
 
 if [ $# -eq 0 ]; then
@@ -84,7 +84,7 @@ uninstall () {
     docker image ls --filter=reference=$IMAGE_NAME
   fi
 
-  #If no arguments for version number, then remove all nms images
+  #If no arguments for version number, then remove all asciimov images
   if [[ -z $ASCIIMOV_ARG2 ]]; then
     docker images | grep ${IMAGE_NAME} | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi -f ${IMAGE_NAME}:{}
   else
