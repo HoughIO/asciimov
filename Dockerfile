@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/houghio/nms/nms:original AS builder
+FROM docker.pkg.github.com/houghio/asciimov/asciimov:original AS builder
 
 FROM node:alpine
 
@@ -15,4 +15,9 @@ RUN pip3 install --upgrade pip setuptools
 RUN pip3 install asciinema
 RUN npm install --global asciicast2gif --unsafe-perm
 
-CMD nms
+RUN mkdir -p /asciimov
+COPY entrypoint.sh /asciimov/entrypoint.sh
+WORKDIR /asciimov
+
+ENTRYPOINT ["/asciimov/entrypoint.sh"]
+

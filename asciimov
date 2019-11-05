@@ -1,8 +1,11 @@
 #!/bin/bash
-ASCIIMOV_VERSION=1.0.1
+ASCIIMOV_VERSION=1.1.0
+
+# $ASCIIMOV is passed into the container 
 
 ASCIIMOV_ARG1=$1
 ASCIIMOV_ARG2=$2
+ASCIIMOV_ARG3=$3
 
 IMAGE_NAME="docker.pkg.github.com/houghio/asciimov/asciimov"
 IMAGE_TAG=$ASCIIMOV_VERSION
@@ -92,7 +95,32 @@ uninstall () {
   fi
 }
 
+decrypt () {
+  if [[ -z $ASCIIMOV_ARG2 ]]; then
+    echo """
+      Please give an argument, such as text to input into figlet to be decrypted.
+      example: asciimov decrypt "some text here"
+        with figlet: asciimov decrypt "some text here" shadow
+    """
+  else
+    if [[ -z $ASCIIMOV_ARG3 ]]; then
+      DECRYPT_TEXT=$ASCIIMOV_ARG2
+      DECRYPT_FIG=$ASCIIMOV_ARG3
+      ASCIIMOV="decrypt"
+      docker run --env ASCIIMOV=$ASCIIMOV \
+                 --env DECRYPT_TEXT=$DECRYPT_TEXT \
+                 --env DECRYPT_FIG=$DECRYPT_FIG \
+                 $IMAGE_NAME:$IMAGE_VERSION
+    fi
+    DECRYPT_TEXT=$ASCIIMOV_ARG2=$2
+  fi
+}
+
 main () {
+  if [[ $ASCIIMOV_ARG1 = "decrypt" ]]; then
+    decrypt
+  fi
+
   if [[ $NO_ARGS = True ]]; then
     print_help
   fi

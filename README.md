@@ -7,25 +7,50 @@ Requires docker.
 
 ```bash
 $ asciimov install
+$ asciimov help
 ```
 
 Add to your path for convenience.
 
 ## Docker
-Head on over to the [Packages section of this repo](https://github.com/HoughIO/nms/packages) and pull the latest image.
+Head on over to the [Packages section of this repo](https://github.com/HoughIO/asciimov/packages) and pull the latest image.
+
 ```bash
-docker pull docker.pkg.github.com/houghio/nms/nms:latest
+asciimov install
+
+or
+
+asciimov install [verion]
+
+or
+
+docker pull docker.pkg.github.com/houghio/asciimov/asciimov:latest
 ```
-(keep in mind `latest` might not be the tag you pulled)
 
 If you want to run this interactively:
 ```bash
-docker run -it docker.pkg.github.com/houghio/nms/nms:latest /bin/bash
+asciimov exec
+
+or
+
+docker run -it docker.pkg.github.com/houghio/asciimov/asciimov:latest /bin/bash
+
 ```
 
 
 ## NMS options
 ```bash
+
+asciimov decrypt [text]
+or
+asciimov decrypt [text] [figlet font]
+```
+
+or the manual way
+
+```
+
+asciimov exec
 $ ls -l | nms
 $ ls -l | nms -a           // Set auto-decrypt flag
 $ ls -l | nms -s           // Set flag to mask space characters
