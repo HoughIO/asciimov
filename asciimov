@@ -1,11 +1,34 @@
 #!/bin/bash
-ASCIIMOV_VERSION=1.1.0
+ASCIIMOV_VERSION=1.1.1
 
-# $ASCIIMOV is passed into the container 
+
+# $ASCIIMOV is passed into the container
+
+#Set DEBUG=1 to get more output
+if [[ $DEBUG = 1 ]]; then
+  set -e -x
+fi
 
 ASCIIMOV_ARG1=$1
+if [[ $DEBUG = 1 ]]; then
+  echo "ASCIIMOV_ARG1:"
+  echo "  $ASCIIMOV_ARG1"
+fi
 ASCIIMOV_ARG2=$2
+if [[ $DEBUG = 1 ]]; then
+  echo "ASCIIMOV_ARG2:"
+  echo "  $ASCIIMOV_ARG2"
+fi
 ASCIIMOV_ARG3=$3
+if [[ $DEBUG = 1 ]]; then
+  echo "ASCIIMOV_ARG3:"
+  echo "  $ASCIIMOV_ARG3"
+fi
+ASCIIMOV_ARG4=$4
+if [[ $DEBUG = 1 ]]; then
+  echo "ASCIIMOV_ARG4: "
+  echo "  $ASCIIMOV_ARG4"
+fi
 
 IMAGE_NAME="docker.pkg.github.com/houghio/asciimov/asciimov"
 IMAGE_TAG=$ASCIIMOV_VERSION
@@ -96,23 +119,30 @@ uninstall () {
 }
 
 decrypt () {
+  # example:             ⬐ $ASCIIMOV_ARG2
+  #   $ asciimov decrypt "sup fools" shadow
+  #              ⬑ $ASCIIMOV_ARG1    ⬑ $ASCIIMOV_ARG3
+  #
   if [[ -z $ASCIIMOV_ARG2 ]]; then
     echo """
       Please give an argument, such as text to input into figlet to be decrypted.
-      example: asciimov decrypt "some text here"
-        with figlet: asciimov decrypt "some text here" shadow
+      example: asciimov decrypt \"some text here\"
+        with figlet: asciimov decrypt \"some text here\" shadow
     """
   else
+    # example:             ⬐ $ASCIIMOV_ARG2
+    #   $ asciimov decrypt "sup fools"
+    #              ⬑ $ASCIIMOV_ARG1
+    #
     if [[ -z $ASCIIMOV_ARG3 ]]; then
       DECRYPT_TEXT=$ASCIIMOV_ARG2
-      DECRYPT_FIG=$ASCIIMOV_ARG3
       ASCIIMOV="decrypt"
-      docker run --env ASCIIMOV=$ASCIIMOV \
-                 --env DECRYPT_TEXT=$DECRYPT_TEXT \
-                 --env DECRYPT_FIG=$DECRYPT_FIG \
-                 $IMAGE_NAME:$IMAGE_VERSION
+      docker run -e ASCIIMOV="${ASCIIMOV}" -e DECRYPT_TEXT="${DECRYPT_TEXT}" "$IMAGE_NAME:$IMAGE_VERSION"
     fi
-    DECRYPT_TEXT=$ASCIIMOV_ARG2=$2
+    DECRYPT_TEXT=$ASCIIMOV_ARG2
+    DECRYPT_FIG=$ASCIIMOV_ARG3
+    echo $IMAGE_VERSION
+    docker run -e ASCIIMOV -e DECRYPT_TEXT -e "${DECRYPT_FIG}" "$IMAGE_NAME:$IMAGE_VERSION"
   fi
 }
 

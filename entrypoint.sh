@@ -14,8 +14,8 @@ if [[ -z $ASCIIMOV ]]; then
     # specify the figlet font
     if [[ -z "DECRYPT_FIG" ]]; then
       figlet "$DECRYPT_TEXT" | nms
+    else
+      figlet -f $DECRYPT_FIG "$DECRYPT_TEXT" | nms
     fi
-  else
-    figlet -f $DECRYPT_FIG "$DECRYPT_TEXT" | nms
   fi
 fi
